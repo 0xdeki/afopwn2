@@ -84,6 +84,8 @@ public class AfoClient implements Runnable {
         }
 
         if (getAccount().getAvatarInfo().getEnergy() < 1) {
+            Time.sleep(60 * 60 * 1000);
+            getAccount().postTask(new Login());
             return 1000;
         }
 
@@ -98,9 +100,6 @@ public class AfoClient implements Runnable {
             getAccount().postTask(new Fight());
             return 1000;
         }
-
-        Time.sleep(10 * 60 * 1000);
-        getAccount().postTask(new Login());
 
         return 1000;
     }
@@ -170,6 +169,10 @@ public class AfoClient implements Runnable {
     }
 
     private boolean handleWeapons() {
+        if (getAccount().getAvatarInfo().getLevel() < 6) {
+            return false;
+        }
+
         if (!hasWeapon("samurai sword")) {
             return buyItem("samurai sword");
         }
