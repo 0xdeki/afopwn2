@@ -2,7 +2,7 @@ package io.deki.afopwn.task.store;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.deki.afopwn.dto.StoreItem;
+import io.deki.afopwn.dto.game.StoreItem;
 import io.deki.afopwn.task.Task;
 
 import java.util.ArrayList;

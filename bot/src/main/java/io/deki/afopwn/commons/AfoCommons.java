@@ -1,7 +1,7 @@
 package io.deki.afopwn.commons;
 
 import io.deki.afopwn.dto.Account;
-import io.deki.afopwn.dto.StoreItem;
+import io.deki.afopwn.dto.game.StoreItem;
 import io.deki.afopwn.task.account.Register;
 import io.deki.afopwn.task.store.LoadSkills;
 import io.deki.afopwn.task.store.LoadStore;

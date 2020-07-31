@@ -4,6 +4,10 @@ import io.deki.afopwn.cache.commons.Category;
 import io.deki.afopwn.commons.AfoCommons;
 import io.deki.afopwn.commons.Time;
 import io.deki.afopwn.dto.*;
+import io.deki.afopwn.dto.game.AvatarTask;
+import io.deki.afopwn.dto.game.BagItem;
+import io.deki.afopwn.dto.game.ExploreMap;
+import io.deki.afopwn.dto.game.StoreItem;
 import io.deki.afopwn.repository.RepositoryContext;
 import io.deki.afopwn.task.account.Login;
 import io.deki.afopwn.task.account.Register;
@@ -11,6 +15,9 @@ import io.deki.afopwn.task.account.Rename;
 import io.deki.afopwn.task.arena.Fight;
 import io.deki.afopwn.task.contest.EnrollContest;
 import io.deki.afopwn.task.explore.Explore;
+import io.deki.afopwn.task.group.GetGroupByName;
+import io.deki.afopwn.task.group.JoinGroup;
+import io.deki.afopwn.task.group.LeaveGroup;
 import io.deki.afopwn.task.inventory.EquipWeapon;
 import io.deki.afopwn.task.inventory.UnequipWeapon;
 import io.deki.afopwn.task.inventory.UseItem;
@@ -71,6 +78,14 @@ public class AfoClient implements Runnable {
             }
         }
 
+        if (handleChests()) {
+            return 1000;
+        }
+
+        if (joinGuild("kule kids klubb")) {
+            return 1000;
+        }
+
         if (findBestWeaponOrder()) {
             return 1000;
         }
@@ -102,6 +117,35 @@ public class AfoClient implements Runnable {
         }
 
         return 10 * 60 * 1000;
+    }
+
+    private boolean joinGuild(String name) {
+        if (getAccount().getAvatarInfo().getLevel() < 20 || (getAccount().getAvatarInfo().getGroup().getName() != null
+                && getAccount().getAvatarInfo().getGroup().getName().equalsIgnoreCase(name))) {
+            return false;
+        }
+
+        if (getAccount().getAvatarInfo().getGroup().getName() != null) {
+            getAccount().postTask(new LeaveGroup());
+            return true;
+        }
+
+        GetGroupByName getGroup = new GetGroupByName(name);
+        getAccount().postTask(getGroup);
+        if (getGroup.getId() != null) {
+            getAccount().postTask(new JoinGroup(getGroup.getId()));
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean handleChests() {
+        if (getAccount().getAvatarInfo().getLevel() < 5) {
+            return false;
+        }
+
+        return useItem("wooden chest");
     }
 
     private boolean findBestWeaponOrder() {

@@ -1,4 +1,4 @@
-package io.deki.afopwn.dto;
+package io.deki.afopwn.dto.game;
 
 import com.google.gson.JsonObject;
 import io.deki.afopwn.cache.item.Asset;

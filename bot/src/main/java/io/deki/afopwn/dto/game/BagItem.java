@@ -1,4 +1,4 @@
-package io.deki.afopwn.dto;
+package io.deki.afopwn.dto.game;
 
 import io.deki.afopwn.cache.item.Asset;
 import io.deki.afopwn.repository.RepositoryContext;

@@ -1,4 +1,4 @@
-package io.deki.afopwn.dto;
+package io.deki.afopwn.dto.game;
 
 import lombok.Getter;
 import lombok.Setter;

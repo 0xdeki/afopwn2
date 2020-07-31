@@ -1,6 +1,7 @@
 package io.deki.afopwn.dto;
 
 import io.deki.afopwn.cache.item.Asset;
+import io.deki.afopwn.dto.game.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,6 +35,8 @@ public class AvatarInfo {
 
     private int gold, diamonds;
 
+    private Group group;
+
     private List<ExploreMap> maps;
 
     private List<BagItem> bag;
@@ -43,6 +46,10 @@ public class AvatarInfo {
     private List<BagItem> weapons;
 
     private List<Asset> skills;
+
+    private List<Pet> pets;
+
+    private List<Pet> inactivePets;
 
     private List<AvatarTask> tasks;
 

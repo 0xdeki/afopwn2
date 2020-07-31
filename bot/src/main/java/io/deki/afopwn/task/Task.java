@@ -7,6 +7,7 @@ import io.deki.afopwn.cache.commons.Category;
 import io.deki.afopwn.cache.item.Asset;
 import io.deki.afopwn.commons.CryptoUtil;
 import io.deki.afopwn.dto.*;
+import io.deki.afopwn.dto.game.*;
 import io.deki.afopwn.repository.RepositoryContext;
 import io.deki.afopwn.task.task.RedeemTask;
 import org.apache.http.HttpEntity;
@@ -142,8 +143,8 @@ public abstract class Task {
             info.setGold(object.get("GLD").getAsInt());
         }
 
-        if (object.has("DMON")) {
-            info.setDiamonds(object.get("DMON").getAsInt());
+        if (object.has("DMND")) {
+            info.setDiamonds(object.get("DMND").getAsInt());
         }
 
         if (object.has("SKIN")) {
@@ -164,6 +165,17 @@ public abstract class Task {
 
         if (object.has("SPD")) {
             info.setSpeed(object.get("SPD").getAsInt());
+        }
+
+        if (object.has("GRP")) {
+            info.setGroup(new Group());
+            JsonObject group = object.getAsJsonObject("GRP");
+            if (group.has("ID")) {
+                info.getGroup().setId(group.get("ID").getAsString());
+            }
+            if (group.has("NAME")) {
+                info.getGroup().setName(group.get("NAME").getAsString());
+            }
         }
 
         if (object.has("ITEM")) {
@@ -248,32 +260,80 @@ public abstract class Task {
             }
         }
 
+        if (object.has("PEX")) {
+            info.setPets(new ArrayList<>());
+            for (JsonElement element : object.getAsJsonArray("PEX")) {
+                JsonObject taskObject = element.getAsJsonObject();
+                Pet pet = new Pet();
+                if (taskObject.has("ID")) {
+                    pet.setId(taskObject.get("ID").getAsInt());
+                }
+                if (taskObject.has("STR")) {
+                    pet.setStrength(taskObject.get("STR").getAsInt());
+                }
+                if (taskObject.has("SPD")) {
+                    pet.setSpeed(taskObject.get("SPD").getAsInt());
+                }
+                if (taskObject.has("AGL")) {
+                    pet.setAgility(taskObject.get("AGL").getAsInt());
+                }
+                if (taskObject.has("HP")) {
+                    pet.setHp(taskObject.get("HP").getAsInt());
+                }
+                if (taskObject.has("QUA")) {
+                    pet.setQuality(taskObject.get("QUA").getAsInt());
+                }
+                info.getPets().add(pet);
+            }
+        }
+
+        if (object.has("RPEX")) {
+            info.setInactivePets(new ArrayList<>());
+            for (JsonElement element : object.getAsJsonArray("RPEX")) {
+                JsonObject taskObject = element.getAsJsonObject();
+                Pet pet = new Pet();
+                if (taskObject.has("ID")) {
+                    pet.setId(taskObject.get("ID").getAsInt());
+                }
+                if (taskObject.has("STR")) {
+                    pet.setStrength(taskObject.get("STR").getAsInt());
+                }
+                if (taskObject.has("SPD")) {
+                    pet.setSpeed(taskObject.get("SPD").getAsInt());
+                }
+                if (taskObject.has("AGL")) {
+                    pet.setAgility(taskObject.get("AGL").getAsInt());
+                }
+                if (taskObject.has("HP")) {
+                    pet.setHp(taskObject.get("HP").getAsInt());
+                }
+                if (taskObject.has("QUA")) {
+                    pet.setQuality(taskObject.get("QUA").getAsInt());
+                }
+                info.getInactivePets().add(pet);
+            }
+        }
+
         if (object.has("TSK")) {
             info.setTasks(new ArrayList<>());
             for (JsonElement element : object.getAsJsonArray("TSK")) {
                 JsonObject taskObject = element.getAsJsonObject();
                 AvatarTask task = new AvatarTask();
-
                 if (taskObject.has("ID")) {
                     task.setId(taskObject.get("ID").getAsInt());
                 }
-
                 if (taskObject.has("NAME")) {
                     task.setName(taskObject.get("NAME").getAsString());
                 }
-
                 if (taskObject.has("DES")) {
                     task.setDescription(taskObject.get("DES").getAsString());
                 }
-
                 if (taskObject.has("KEY")) {
                     task.setKey(taskObject.get("KEY").getAsString());
                 }
-
                 if (taskObject.has("PRG")) {
                     task.setProgress(taskObject.get("PRG").getAsInt());
                 }
-
                 info.getTasks().add(task);
             }
         }
