@@ -101,7 +101,7 @@ public class AfoClient implements Runnable {
             return 1000;
         }
 
-        return 1000;
+        return 10 * 60 * 1000;
     }
 
     private boolean findBestWeaponOrder() {
