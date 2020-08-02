@@ -7,6 +7,7 @@ import io.deki.afopwn.commons.Time;
 import io.deki.afopwn.dto.*;
 import io.deki.afopwn.dto.game.*;
 import io.deki.afopwn.repository.RepositoryContext;
+import io.deki.afopwn.task.account.AcceptTOS;
 import io.deki.afopwn.task.account.Login;
 import io.deki.afopwn.task.account.Register;
 import io.deki.afopwn.task.account.Rename;
@@ -64,6 +65,10 @@ public class AfoClient implements Runnable {
                 getAccount().postTask(new Login());
             }
             return 2000;
+        }
+
+        if (handleTOS()) {
+            return 1000;
         }
 
         if (getAccount().getAvatarInfo().getNextDailyReward() < System.currentTimeMillis()) {
@@ -133,6 +138,16 @@ public class AfoClient implements Runnable {
         }
 
         return 10 * 60 * 1000;
+    }
+
+    private boolean handleTOS() {
+        if (getAccount().getAvatarInfo().getLevel() >= 20 && getAccount().getAvatarInfo().getVip() == 1) {
+            getAccount().postTask(new AcceptTOS());
+            getAccount().postTask(new Login());
+            return true;
+        }
+
+        return false;
     }
 
     private boolean buyNewMine() {
