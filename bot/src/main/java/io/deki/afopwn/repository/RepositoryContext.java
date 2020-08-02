@@ -32,7 +32,7 @@ public class RepositoryContext {
 
         for (Account account : accountRepository.findAll()) {
             executor.execute(new AfoClient(account));
-            Time.sleep(2000);
+            Time.sleep(50);
         }
     }
 

@@ -167,6 +167,10 @@ public abstract class Task {
             info.setSpeed(object.get("SPD").getAsInt());
         }
 
+        if (object.has("VIP")) {
+            info.setVip(object.get("VIP").getAsInt());
+        }
+
         if (object.has("GRP")) {
             info.setGroup(new Group());
             JsonObject group = object.getAsJsonObject("GRP");
@@ -311,6 +315,30 @@ public abstract class Task {
                     pet.setQuality(taskObject.get("QUA").getAsInt());
                 }
                 info.getInactivePets().add(pet);
+            }
+        }
+
+        if (object.has("LAND")) {
+            info.setLand(new ArrayList<>());
+            for (JsonElement element : object.getAsJsonArray("LAND")) {
+                JsonObject taskObject = element.getAsJsonObject();
+                Land land = new Land();
+                if (taskObject.has("TYPE")) {
+                    land.setType(taskObject.get("TYPE").getAsInt());
+                }
+                if (taskObject.has("IDX")) {
+                    land.setIndex(taskObject.get("IDX").getAsInt());
+                }
+                if (taskObject.has("STA")) {
+                    land.setStarted(taskObject.get("STA").getAsInt());
+                }
+                if (taskObject.has("CNT")) {
+                    land.setCount(taskObject.get("CNT").getAsInt());
+                }
+                if (taskObject.has("TS")) {
+                    land.setFinished(taskObject.get("TS").getAsLong());
+                }
+                info.getLand().add(land);
             }
         }
 

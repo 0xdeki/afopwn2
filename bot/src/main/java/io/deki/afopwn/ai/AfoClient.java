@@ -2,12 +2,10 @@ package io.deki.afopwn.ai;
 
 import io.deki.afopwn.cache.commons.Category;
 import io.deki.afopwn.commons.AfoCommons;
+import io.deki.afopwn.commons.Random;
 import io.deki.afopwn.commons.Time;
 import io.deki.afopwn.dto.*;
-import io.deki.afopwn.dto.game.AvatarTask;
-import io.deki.afopwn.dto.game.BagItem;
-import io.deki.afopwn.dto.game.ExploreMap;
-import io.deki.afopwn.dto.game.StoreItem;
+import io.deki.afopwn.dto.game.*;
 import io.deki.afopwn.repository.RepositoryContext;
 import io.deki.afopwn.task.account.Login;
 import io.deki.afopwn.task.account.Register;
@@ -15,12 +13,14 @@ import io.deki.afopwn.task.account.Rename;
 import io.deki.afopwn.task.arena.Fight;
 import io.deki.afopwn.task.contest.EnrollContest;
 import io.deki.afopwn.task.explore.Explore;
+import io.deki.afopwn.task.group.DonateItem;
 import io.deki.afopwn.task.group.GetGroupByName;
 import io.deki.afopwn.task.group.JoinGroup;
 import io.deki.afopwn.task.group.LeaveGroup;
 import io.deki.afopwn.task.inventory.EquipWeapon;
 import io.deki.afopwn.task.inventory.UnequipWeapon;
 import io.deki.afopwn.task.inventory.UseItem;
+import io.deki.afopwn.task.land.*;
 import io.deki.afopwn.task.social.AddFriend;
 import io.deki.afopwn.task.store.BuyItem;
 import io.deki.afopwn.task.task.DailyTask;
@@ -86,6 +86,10 @@ public class AfoClient implements Runnable {
             return 1000;
         }
 
+        if (donateValuablesToGuild()) {
+            return 1000;
+        }
+
         if (findBestWeaponOrder()) {
             return 1000;
         }
@@ -95,6 +99,18 @@ public class AfoClient implements Runnable {
         }
 
         if (handleWeapons()) {
+            return 1000;
+        }
+
+        if (handleMines()) {
+            return 1000;
+        }
+
+        if (buyNewMine()) {
+            return 1000;
+        }
+
+        if (unlockNewLand()) {
             return 1000;
         }
 
@@ -119,6 +135,68 @@ public class AfoClient implements Runnable {
         return 10 * 60 * 1000;
     }
 
+    private boolean buyNewMine() {
+        int wood = 0, stone = 0, iron = 0;
+        for (Land land : getAccount().getAvatarInfo().getLand()) {
+            switch (land.getType()) {
+                case 1:
+                    ++wood;
+                    break;
+                case 2:
+                    ++stone;
+                    break;
+                case 3:
+                    ++iron;
+                    break;
+            }
+        }
+        if (getAccount().getAvatarInfo().getLevel() >= 20 && getAccount().getAvatarInfo().getGold() >= 2000
+                && getAccount().getAvatarInfo().getIndexOfEmptyLand() != -1) {
+            if (wood == 0 && stone == 0 && iron == 0) {
+                getAccount().postTask(new BuyLand(Random.nextInt(1, 3)));
+            } else if (wood < 1) {
+                getAccount().postTask(new BuyLand(1));
+            } else if (stone < 1) {
+                getAccount().postTask(new BuyLand(2));
+            } else if (iron < 1) {
+                getAccount().postTask(new BuyLand(3));
+            } else if (wood < 2) {
+                getAccount().postTask(new BuyLand(1));
+            } else if (stone < 2) {
+                getAccount().postTask(new BuyLand(2));
+            } else if (iron < 2) {
+                getAccount().postTask(new BuyLand(3));
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean unlockNewLand() {
+        if (getAccount().getAvatarInfo().getLevel() >= 20 && getAccount().getAvatarInfo().getLand().size() < 2) {
+            getAccount().postTask(new FightLandRival());
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean handleMines() {
+        for (Land land : getAccount().getAvatarInfo().getLand()) {
+            if (land.getStarted() != 0 && land.getFinished() < System.currentTimeMillis()) {
+                getAccount().postTask(new CollectLandProduction(land.getIndex()));
+                return true;
+            }
+            if (land.getType() >= 1 && land.getType() <= 3 && land.getStarted() == 0) {
+                getAccount().postTask(new StartLandProduction(land.getIndex()));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private boolean joinGuild(String name) {
         if (getAccount().getAvatarInfo().getLevel() < 20 || (getAccount().getAvatarInfo().getGroup().getName() != null
                 && getAccount().getAvatarInfo().getGroup().getName().equalsIgnoreCase(name))) {
@@ -138,6 +216,23 @@ public class AfoClient implements Runnable {
         }
 
         return false;
+    }
+
+    private boolean donateValuablesToGuild() {
+        if (getAccount().getAvatarInfo().getLevel() < 20 || getAccount().getAvatarInfo().getGroup().getName() == null) {
+            return false;
+        }
+
+        AtomicBoolean donated = new AtomicBoolean();
+        getAccount().getAvatarInfo().getBagItem(item ->
+                item.getAsset().getName().endsWith(" Gem") || item.getAsset().getName().endsWith(" Crystal"))
+                .ifPresent(item -> {
+                    getAccount().postTask(new DonateItem(getAccount().getAvatarInfo().getGroup().getId(), item.format(),
+                            item.getAmount()));
+                    donated.set(true);
+                });
+
+        return donated.get();
     }
 
     private boolean handleChests() {

@@ -35,6 +35,8 @@ public class AvatarInfo {
 
     private int gold, diamonds;
 
+    private int vip;
+
     private Group group;
 
     private List<ExploreMap> maps;
@@ -51,7 +53,18 @@ public class AvatarInfo {
 
     private List<Pet> inactivePets;
 
+    private List<Land> land;
+
     private List<AvatarTask> tasks;
+
+    public int getIndexOfEmptyLand() {
+        for (Land piece : land) {
+            if (piece.getType() == 0) {
+                return piece.getIndex();
+            }
+        }
+        return -1;
+    }
 
     public Optional<ExploreMap> getMap(int id) {
         for (ExploreMap map : getMaps()) {
