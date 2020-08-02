@@ -240,7 +240,9 @@ public class AfoClient implements Runnable {
 
         AtomicBoolean donated = new AtomicBoolean();
         getAccount().getAvatarInfo().getBagItem(item ->
-                item.getAsset().getName().endsWith(" Gem") || item.getAsset().getName().endsWith(" Crystal"))
+                item.getAsset().getName().endsWith(" Gem") || item.getAsset().getName().endsWith(" Crystal")
+                        || item.getAsset().getName().equals("Wood") || item.getAsset().getName().equals("Stone")
+                        || item.getAsset().getName().equals("Iron"))
                 .ifPresent(item -> {
                     getAccount().postTask(new DonateItem(getAccount().getAvatarInfo().getGroup().getId(), item.format(),
                             item.getAmount()));
