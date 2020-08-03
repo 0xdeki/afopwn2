@@ -28,6 +28,8 @@ public class Account {
 
     private String password, passwordHash;
 
+    private boolean main;
+
     private AvatarInfo avatarInfo;
 
     public void postTask(Task task) {

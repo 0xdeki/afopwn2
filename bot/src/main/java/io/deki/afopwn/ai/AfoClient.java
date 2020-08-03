@@ -87,35 +87,37 @@ public class AfoClient implements Runnable {
             return 1000;
         }
 
-        if (joinGuild("kule kids klubb")) {
-            return 1000;
-        }
+        if (!getAccount().isMain()) {
+            if (joinGuild("kule kids klubb")) {
+                return 1000;
+            }
 
-        if (donateValuablesToGuild()) {
-            return 1000;
-        }
+            if (donateValuablesToGuild()) {
+                return 1000;
+            }
 
-        if (findBestWeaponOrder()) {
-            return 1000;
-        }
+            if (findBestWeaponOrder()) {
+                return 1000;
+            }
 
-        if (handleSkills()) {
-            return 1000;
-        }
+            if (handleSkills()) {
+                return 1000;
+            }
 
-        if (handleWeapons()) {
-            return 1000;
+            if (handleWeapons()) {
+                return 1000;
+            }
+
+            if (buyNewMine()) {
+                return 1000;
+            }
+
+            if (unlockNewLand()) {
+                return 1000;
+            }
         }
 
         if (handleMines()) {
-            return 1000;
-        }
-
-        if (buyNewMine()) {
-            return 1000;
-        }
-
-        if (unlockNewLand()) {
             return 1000;
         }
 
