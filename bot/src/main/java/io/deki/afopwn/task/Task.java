@@ -171,6 +171,10 @@ public abstract class Task {
             info.setVip(object.get("VIP").getAsInt());
         }
 
+        if (object.has("LVB")) {
+            info.setLastLevelupReward(object.get("LVB").getAsInt());
+        }
+
         if (object.has("GRP")) {
             info.setGroup(new Group());
             JsonObject group = object.getAsJsonObject("GRP");

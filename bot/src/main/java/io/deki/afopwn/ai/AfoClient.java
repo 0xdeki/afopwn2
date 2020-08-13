@@ -25,6 +25,7 @@ import io.deki.afopwn.task.land.*;
 import io.deki.afopwn.task.social.AddFriend;
 import io.deki.afopwn.task.store.BuyItem;
 import io.deki.afopwn.task.task.DailyTask;
+import io.deki.afopwn.task.task.RedeemLevelupReward;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,6 +36,10 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class AfoClient implements Runnable {
+
+    private final int[] LEVELUP_REWARD_LEVELS = new int[]{
+            15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110
+    };
 
     private boolean working = true;
 
@@ -81,6 +86,10 @@ public class AfoClient implements Runnable {
             if (handleTask(task)) {
                 return 1000;
             }
+        }
+
+        if (handleLevelupReward()) {
+            return 1000;
         }
 
         if (handleChests()) {
@@ -147,6 +156,21 @@ public class AfoClient implements Runnable {
             getAccount().postTask(new AcceptTOS());
             getAccount().postTask(new Login());
             return true;
+        }
+
+        return false;
+    }
+
+    private boolean handleLevelupReward() {
+        for (int level : LEVELUP_REWARD_LEVELS) {
+            if (level <= getAccount().getAvatarInfo().getLastLevelupReward()) {
+                continue;
+            }
+            if (getAccount().getAvatarInfo().getLevel() > level) {
+                getAccount().postTask(new RedeemLevelupReward());
+                getAccount().postTask(new Login());
+                return true;
+            }
         }
 
         return false;

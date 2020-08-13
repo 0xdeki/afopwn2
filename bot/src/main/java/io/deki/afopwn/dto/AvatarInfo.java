@@ -37,6 +37,8 @@ public class AvatarInfo {
 
     private int vip;
 
+    private int lastLevelupReward;
+
     private Group group;
 
     private List<ExploreMap> maps;
