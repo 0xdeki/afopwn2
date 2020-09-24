@@ -31,6 +31,9 @@ public class Cache {
     public void load() throws IOException {
         loadDictionary();
         loadAssets();
+        for (Asset asset : assets) {
+            System.out.println(asset.toString());
+        }
     }
 
     private void loadDictionary() throws IOException {

@@ -76,11 +76,11 @@ public class AfoClient implements Runnable {
             return 1000;
         }
 
-        if (getAccount().getAvatarInfo().getNextDailyReward() < System.currentTimeMillis()) {
-            getAccount().postTask(new DailyTask());
-            getAccount().postTask(new Login());
-            return 1000;
-        }
+        //if (getAccount().getAvatarInfo().getNextDailyReward() < System.currentTimeMillis()) {
+        //    getAccount().postTask(new DailyTask());
+        //    getAccount().postTask(new Login());
+        //    return 1000;
+        //}
 
         for (AvatarTask task : getAccount().getAvatarInfo().getTasks()) {
             if (handleTask(task)) {
@@ -104,29 +104,29 @@ public class AfoClient implements Runnable {
             if (donateValuablesToGuild()) {
                 return 1000;
             }
+        }
 
-            if (findBestWeaponOrder()) {
-                return 1000;
-            }
+        if (buyNewMine()) {
+            return 1000;
+        }
 
-            if (handleSkills()) {
-                return 1000;
-            }
+        if (handleSkills()) {
+            return 1000;
+        }
 
-            if (handleWeapons()) {
-                return 1000;
-            }
+        if (handleWeapons()) {
+            return 1000;
+        }
 
-            if (buyNewMine()) {
-                return 1000;
-            }
-
-            if (unlockNewLand()) {
-                return 1000;
-            }
+        if (unlockNewLand()) {
+            return 1000;
         }
 
         if (handleMines()) {
+            return 1000;
+        }
+
+        if (findBestWeaponOrder()) {
             return 1000;
         }
 
@@ -201,12 +201,6 @@ public class AfoClient implements Runnable {
                 getAccount().postTask(new BuyLand(2));
             } else if (iron < 1) {
                 getAccount().postTask(new BuyLand(3));
-            } else if (wood < 2) {
-                getAccount().postTask(new BuyLand(1));
-            } else if (stone < 2) {
-                getAccount().postTask(new BuyLand(2));
-            } else if (iron < 2) {
-                getAccount().postTask(new BuyLand(3));
             }
             return true;
         }
@@ -216,6 +210,10 @@ public class AfoClient implements Runnable {
 
     private boolean unlockNewLand() {
         if (getAccount().getAvatarInfo().getLevel() >= 20 && getAccount().getAvatarInfo().getLand().size() < 2) {
+            getAccount().postTask(new FightLandRival());
+            return true;
+        }
+        if (getAccount().getAvatarInfo().getLevel() >= 30 && getAccount().getAvatarInfo().getLand().size() < 3) {
             getAccount().postTask(new FightLandRival());
             return true;
         }
@@ -331,48 +329,33 @@ public class AfoClient implements Runnable {
     }
 
     private boolean handleSkills() {
+        String[] skills = new String[]{"counter attack master", "batter master", "wrath", "last blood",
+                "lightning strike", "call friend", "pets master", "sheep spell", "stone spell", "blizzard",
+                "tornado", "storm"};
         if (getAccount().getAvatarInfo().getLevel() < 5) {
             return false;
         }
 
-        if (!getAccount().getAvatarInfo().getSkill("counter attack master").isPresent()) {
-            return buySkill("counter attack master");
-        }
-
-        if (!getAccount().getAvatarInfo().getSkill("batter master").isPresent()) {
-            return buySkill("batter master");
-        }
-
-        if (!getAccount().getAvatarInfo().getSkill("wrath").isPresent()) {
-            return buySkill("wrath");
+        for (String skill : skills) {
+            if (!getAccount().getAvatarInfo().getSkill(skill).isPresent()) {
+                return buySkill(skill);
+            }
         }
 
         return false;
     }
 
     private boolean handleWeapons() {
+        String[] weapons = new String[]{"samurai sword", "trident", "bow", "rusty axe", "stone hammer",
+                "sickle", "heavy sword", "laser sword", "flamethrower", "rocket"};
         if (getAccount().getAvatarInfo().getLevel() < 6) {
             return false;
         }
 
-        if (!hasWeapon("samurai sword")) {
-            return buyItem("samurai sword");
-        }
-
-        if (!hasWeapon("trident")) {
-            return buyItem("trident");
-        }
-
-        if (!hasWeapon("bow")) {
-            return buyItem("bow");
-        }
-
-        if (!hasWeapon("rusty axe")) {
-            return buyItem("rusty axe");
-        }
-
-        if (!hasWeapon("stone hammer")) {
-            return buyItem("stone hammer");
+        for (String weapon : weapons) {
+            if (!hasWeapon(weapon)) {
+                return buyItem(weapon);
+            }
         }
 
         return false;

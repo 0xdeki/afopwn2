@@ -33,6 +33,7 @@ public class Account {
     private AvatarInfo avatarInfo;
 
     public void postTask(Task task) {
+        System.out.println(getUsername() + ": " + task.getClass().getSimpleName());
         if (getDeviceId() == null) {
             setDeviceId(Random.nextString(16));
         }
